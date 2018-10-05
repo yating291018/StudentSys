@@ -100,7 +100,8 @@ void deleteData(Student *sp, int length){
 		fclose(fp);
 		remove("./data.txt");
 		rename("./temp.txt", "./data.txt");
-		printf("删除成功!");
+		printf("删除成功!\n");
+		printf("要退出吗?y/n\n");
 		getchar();
 		exit = getchar();
 	}while(exit == 'y' || exit == 'Y');
