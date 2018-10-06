@@ -16,6 +16,7 @@ Student stu[70];
   输入对应的数字，进入到对应的功能
 */
 char menu() {
+	system("cls");
 	char c;
 	printf(" ╭═════════■□■□═══╮\n");  
 	printf("│         学生信息管理系统         │\n");  
@@ -32,6 +33,8 @@ char menu() {
 	c = getchar();
 	return c;
 }
+void initFeture(char selectMenu, Student *sp);
+void initEnter(Student *sp);
 // 添加学生信息，可以一次添加n条
 void addStudent(Student *sp, int dataLine, int fileEnd){
 	char exit;
@@ -59,7 +62,8 @@ void addStudent(Student *sp, int dataLine, int fileEnd){
 		fprintf(fp, "%d %s %.2f\n", (sp + j) -> id, (sp + j) -> SName, (sp + j) -> Score);
 	}
 	fclose(fp);
-	system("cls");
+	getchar();
+	initEnter(stu);
 }
 
 // 退出功能
@@ -105,6 +109,56 @@ void deleteData(Student *sp, int length){
 		getchar();
 		exit = getchar();
 	}while(exit == 'y' || exit == 'Y');
+	getchar();
+	initEnter(stu);
+}
+
+// 修改数据
+void updateData(Student *sp, int length){
+	char exit;
+	do{
+		printf("输入要修改的属性1.id 2.name, 比如输入1\n");
+		// 属性的序号
+		int keyIndex;
+		scanf("%d", &keyIndex);
+		// 要删除的id和名字
+		int deleteId;
+		char deleteName[20];
+		if (keyIndex == 1) {
+			printf("输入要修改的id\n");
+			scanf("%d", &deleteId);
+		} else if(keyIndex == 2){
+			printf("输入要修改的名称\n");
+			scanf("%s", deleteName);
+		}
+		for(int i = 0;i < length; i++){
+			// 找到要删除的数据
+			if((sp+i) -> id == deleteId || strcmp((sp+i) -> SName, deleteName) == 0){
+				printf("修改一下数据%d %s %.2f\n", (sp+i) -> id, (sp+i) -> SName, (sp+i) -> Score);
+				printf("修改id\n");
+				scanf("%d", &(sp+i) -> id);
+				printf("修改姓名\n");
+				scanf("%s", &(sp+i) -> SName);
+				printf("修改成绩\n");
+				scanf("%f", &(sp+i) -> Score);
+			}
+		}
+		getchar();
+		printf("是否要退出修改?y/n\n");
+		exit = getchar();
+	}while(exit == 'y' || exit == 'Y');
+	FILE *fp = fopen("./data.txt", "w");
+	if (!fp){
+		printf("打开文件错误!\n");
+		return;
+	}
+	for(int j = 0;j < length; j++){
+		fprintf(fp, "%d %s %.2f\n", (sp+j) -> id, (sp+j) -> SName, (sp+j) -> Score);
+	}
+	fclose(fp);
+	printf("修改成功!");
+	getchar();
+	initEnter(stu);
 }
 
 // 功能项,如果有其他的项再继续添加
@@ -129,13 +183,19 @@ void initFeture(char selectMenu, Student *sp){
 		  addStudent(sp, dataLine, fileEnd);
 		  break;
 	  case '3':
+		  updateData(sp, dataLine);
+		  break;
+	  case '4':
 		  deleteData(sp, dataLine);
 		  break;
 	}
 }
-void main () {
+void initEnter(Student *sp){
 	// 调用菜单选择功能项
 	char selectMenu = menu();
 	// 初始化功能入口
-	initFeture(selectMenu, stu);
+	initFeture(selectMenu, sp);
+}
+void main () {
+	initEnter(stu);
 }
